@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Luminary — Where Ideas Glow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --ink:   #0f0e0c;
+      --cream: #f5f0e8;
+      --warm:  #e8dfc8;
+      --gold:  #c9a84c;
+      --rust:  #b5512a;
+      --muted: #7a7060;
+      --nav-h: 72px;
+      --green: #2a7a4f;
+      --blue:  #2a4a7a;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; overflow-x: hidden; }
+
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: var(--nav-h); display: flex; align-items: center; justify-content: space-between; padding: 0 6vw; background: rgba(245,240,232,.93); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(201,168,76,.25); }
+    .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.55rem; font-weight: 600; letter-spacing: .03em; color: var(--ink); text-decoration: none; }
+    .nav-logo span { color: var(--gold); }
+    .nav-links { display: flex; gap: 2.4rem; list-style: none; }
+    .nav-links a { font-size: .85rem; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); text-decoration: none; position: relative; transition: color .25s; }
+    .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 1px; background: var(--gold); transform: scaleX(0); transform-origin: left; transition: transform .3s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--ink); }
+    .nav-links a:hover::after, .nav-links a.active::after { transform: scaleX(1); }
+
+    /* PAGES */
+    .page { display: none; padding-top: var(--nav-h); min-height: 100vh; }
+    .page.active { display: block; animation: fadeUp .5s ease both; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+    /* SHARED */
+    .section-tag { display: inline-block; font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; color: var(--rust); margin-bottom: 1rem; }
+    .section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2rem,3.5vw,3rem); font-weight: 300; }
+    .section-title em { font-style: italic; color: var(--gold); }
+    .divider { width: 60px; height: 2px; background: var(--gold); margin: 1.8rem 0; }
+    .body-text { font-size: 1rem; line-height: 1.8; color: var(--muted); margin-bottom: 1.2rem; }
+
+    /* HOME */
+    .hero { min-height: calc(100vh - var(--nav-h)); display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 4rem; padding: 6rem 6vw 4rem; position: relative; overflow: hidden; }
+    .hero::before { content:''; position:absolute; right:-8vw; top:50%; transform:translateY(-50%); width:55vw; height:55vw; border-radius:50%; background:radial-gradient(circle,rgba(201,168,76,.18) 0%,transparent 70%); pointer-events:none; }
+    .hero-eyebrow { font-size:.75rem; letter-spacing:.18em; text-transform:uppercase; color:var(--rust); font-weight:500; margin-bottom:1.4rem; }
+    .hero-title { font-family:'Cormorant Garamond',serif; font-size:clamp(3rem,5.5vw,5.2rem); font-weight:300; line-height:1.08; margin-bottom:1.6rem; }
+    .hero-title em { font-style:italic; color:var(--gold); }
+    .hero-body { font-size:1.05rem; line-height:1.75; color:var(--muted); max-width:38ch; margin-bottom:2.8rem; }
+    .btn { display:inline-flex; align-items:center; gap:.7rem; padding:.85rem 2rem; font-size:.82rem; font-weight:500; letter-spacing:.1em; text-transform:uppercase; text-decoration:none; transition:all .25s; cursor:pointer; border:none; font-family:inherit; }
+    .btn-primary { background:var(--ink); color:var(--cream); }
+    .btn-primary:hover { background:var(--rust); }
+    .btn-outline { background:transparent; color:var(--ink); border:1px solid var(--ink); margin-left:1rem; }
+    .btn-outline:hover { background:var(--ink); color:var(--cream); }
+    .hero-visual { display:flex; align-items:center; justify-content:center; position:relative; }
+    .hero-card { width:320px; aspect-ratio:3/4; background:var(--ink); position:relative; overflow:hidden; box-shadow:24px 32px 64px rgba(15,14,12,.22); }
+    .hero-card::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(201,168,76,.35) 0%,transparent 60%); }
+    .hero-card-text { position:absolute; bottom:2.4rem; left:2.4rem; right:2.4rem; font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:300; color:var(--cream); line-height:1.2; }
+    .hero-card-text span { display:block; font-size:.75rem; letter-spacing:.15em; text-transform:uppercase; color:var(--gold); font-family:'DM Sans',sans-serif; margin-bottom:.5rem; }
+    .hero-badge { position:absolute; top:-1.5rem; right:-1.5rem; width:90px; height:90px; border-radius:50%; background:var(--gold); display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:'Cormorant Garamond',serif; font-size:.72rem; font-weight:600; text-align:center; color:var(--ink); letter-spacing:.04em; line-height:1.3; animation:spin 18s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .stats-row { display:grid; grid-template-columns:repeat(3,1fr); padding:3rem 6vw; border-top:1px solid rgba(201,168,76,.3); border-bottom:1px solid rgba(201,168,76,.3); gap:2rem; }
+    .stat { text-align:center; }
+    .stat-num { font-family:'Cormorant Garamond',serif; font-size:2.8rem; font-weight:300; color:var(--gold); }
+    .stat-label { font-size:.78rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+    .features { padding:6rem 6vw; }
+    .section-header { text-align:center; margin-bottom:4rem; }
+    .cards { display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; }
+    .card { padding:2.5rem; background:var(--warm); border:1px solid rgba(201,168,76,.2); transition:transform .3s,box-shadow .3s; }
+    .card:hover { transform:translateY(-6px); box-shadow:0 20px 48px rgba(15,14,12,.1); }
+    .card-icon { width:48px; height:48px; background:var(--ink); display:flex; align-items:center; justify-content:center; font-size:1.4rem; margin-bottom:1.4rem; }
+    .card h3 { font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-weight:400; margin-bottom:.7rem; }
+    .card p { font-size:.9rem; line-height:1.7; color:var(--muted); }
+
+    /* ABOUT */
+    .about-hero { padding:5rem 6vw 4rem; display:grid; grid-template-columns:1fr 1.2fr; gap:5rem; align-items:center; }
+    .about-img { aspect-ratio:4/5; background:var(--ink); position:relative; overflow:hidden; }
+    .about-img::after { content:''; position:absolute; inset:0; background:linear-gradient(45deg,var(--gold) 0%,transparent 55%); opacity:.35; }
+    .about-img-inner { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:'Cormorant Garamond',serif; font-size:4rem; font-weight:300; color:rgba(245,240,232,.12); letter-spacing:.1em; }
+
+    .company-info-band { background:var(--ink); padding:4rem 6vw; display:grid; grid-template-columns:repeat(4,1fr); gap:2rem; }
+    .ci-item { border-left:2px solid rgba(201,168,76,.4); padding-left:1.4rem; }
+    .ci-label { font-size:.7rem; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); margin-bottom:.4rem; }
+    .ci-value { font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-weight:300; color:var(--cream); line-height:1.3; }
+
+    .mvv { padding:5rem 6vw; display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; }
+    .mvv-card { padding:2.5rem; border:1px solid rgba(201,168,76,.2); background:var(--warm); position:relative; overflow:hidden; }
+    .mvv-card::before { content:attr(data-num); position:absolute; top:-10px; right:16px; font-family:'Cormorant Garamond',serif; font-size:6rem; font-weight:300; color:rgba(201,168,76,.12); line-height:1; pointer-events:none; }
+    .mvv-card h3 { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:400; margin-bottom:.8rem; }
+    .mvv-card p { font-size:.9rem; line-height:1.75; color:var(--muted); }
+
+    .team-section { padding:0 6vw 5rem; }
+    .team-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; margin-top:3rem; }
+    .team-card { background:var(--warm); border:1px solid rgba(201,168,76,.2); padding:2rem 1.5rem; text-align:center; transition:transform .3s,box-shadow .3s; }
+    .team-card:hover { transform:translateY(-5px); box-shadow:0 16px 40px rgba(15,14,12,.1); }
+    .team-avatar { width:72px; height:72px; border-radius:50%; background:var(--ink); margin:0 auto 1rem; display:flex; align-items:center; justify-content:center; font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:300; color:var(--gold); }
+    .team-card h3 { font-family:'Cormorant Garamond',serif; font-size:1.2rem; margin-bottom:.2rem; }
+    .team-card .role { font-size:.78rem; color:var(--muted); letter-spacing:.05em; margin-bottom:.6rem; }
+    .team-card .dept { display:inline-block; font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; padding:.2rem .7rem; background:rgba(201,168,76,.15); color:var(--rust); border:1px solid rgba(201,168,76,.3); }
+
+    /* GUIDANCE SECTION */
+    .guidance-section { background:#f0ebe0; padding:5rem 6vw; }
+    .guidance-header { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:3rem; flex-wrap:wrap; gap:1rem; }
+    .guidance-badge { display:inline-flex; align-items:center; gap:.5rem; background:var(--ink); color:var(--gold); font-size:.72rem; letter-spacing:.15em; text-transform:uppercase; padding:.4rem 1rem; font-weight:500; }
+    .tab-row { display:flex; gap:.5rem; margin-bottom:2.5rem; flex-wrap:wrap; }
+    .tab-btn { padding:.55rem 1.4rem; font-size:.8rem; font-weight:500; letter-spacing:.07em; text-transform:uppercase; cursor:pointer; border:1px solid rgba(201,168,76,.35); background:transparent; color:var(--muted); font-family:'DM Sans',sans-serif; transition:all .2s; }
+    .tab-btn.active { background:var(--ink); color:var(--gold); border-color:var(--ink); }
+    .tab-btn:hover:not(.active) { border-color:var(--ink); color:var(--ink); }
+    .tab-pane { display:none; }
+    .tab-pane.active { display:block; animation:fadeUp .35s ease both; }
+
+    .instr-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1.5rem; }
+    .instr-card { background:var(--cream); border:1px solid rgba(201,168,76,.2); padding:2rem; position:relative; }
+    .instr-step { position:absolute; top:1.2rem; right:1.4rem; font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:300; color:rgba(201,168,76,.3); line-height:1; }
+    .instr-icon { font-size:1.5rem; margin-bottom:.8rem; }
+    .instr-card h4 { font-family:'Cormorant Garamond',serif; font-size:1.25rem; font-weight:400; margin-bottom:.6rem; }
+    .instr-card p { font-size:.88rem; line-height:1.7; color:var(--muted); }
+    .instr-card ul { padding-left:1.2rem; margin-top:.5rem; }
+    .instr-card ul li { font-size:.88rem; line-height:1.8; color:var(--muted); }
+
+    .policy-table { width:100%; border-collapse:collapse; }
+    .policy-table th { background:var(--ink); color:var(--gold); font-size:.75rem; letter-spacing:.12em; text-transform:uppercase; padding:.9rem 1.2rem; text-align:left; font-weight:500; }
+    .policy-table td { padding:.9rem 1.2rem; font-size:.9rem; border-bottom:1px solid rgba(201,168,76,.15); background:var(--cream); vertical-align:top; }
+    .policy-table tr:last-child td { border-bottom:none; }
+    .policy-table tr:hover td { background:var(--warm); }
+    .badge { display:inline-block; font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; padding:.18rem .6rem; border-radius:2px; font-weight:500; }
+    .badge-all  { background:rgba(42,122,79,.15);  color:var(--green); border:1px solid rgba(42,122,79,.3); }
+    .badge-lead { background:rgba(181,81,42,.12);  color:var(--rust);  border:1px solid rgba(181,81,42,.3); }
+    .badge-dev  { background:rgba(42,74,122,.12);  color:var(--blue);  border:1px solid rgba(42,74,122,.3); }
+
+    .checklist { display:flex; flex-direction:column; gap:1rem; }
+    .cl-item { display:flex; gap:1.2rem; align-items:flex-start; background:var(--cream); padding:1.4rem 1.6rem; border:1px solid rgba(201,168,76,.2); }
+    .cl-check { width:24px; height:24px; border:1.5px solid var(--gold); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:.75rem; color:var(--gold); margin-top:2px; }
+    .cl-body strong { display:block; font-size:.9rem; font-weight:500; margin-bottom:.2rem; }
+    .cl-body span { font-size:.85rem; color:var(--muted); line-height:1.6; }
+
+    .contact-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; }
+    .contact-card { background:var(--cream); border:1px solid rgba(201,168,76,.2); padding:2rem; }
+    .contact-card h4 { font-family:'Cormorant Garamond',serif; font-size:1.2rem; margin-bottom:.3rem; }
+    .contact-card p { font-size:.88rem; color:var(--muted); line-height:1.6; }
+    .contact-card a { color:var(--ink); font-weight:500; text-decoration:none; border-bottom:1px solid var(--gold); }
+
+    /* CONTACT PAGE */
+    .contact-wrap { padding:5rem 6vw; display:grid; grid-template-columns:1fr 1.3fr; gap:5rem; }
+    .contact-detail { display:flex; gap:1rem; align-items:flex-start; margin-bottom:1.8rem; }
+    .contact-icon { width:40px; height:40px; background:var(--ink); display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; color:var(--gold); }
+    .contact-form { display:flex; flex-direction:column; gap:1.4rem; }
+    .form-group { display:flex; flex-direction:column; gap:.4rem; }
+    .form-group label { font-size:.75rem; letter-spacing:.13em; text-transform:uppercase; color:var(--muted); font-weight:500; }
+    .form-group input, .form-group textarea, .form-group select { padding:.9rem 1.1rem; font-size:.95rem; font-family:'DM Sans',sans-serif; background:var(--warm); border:1px solid rgba(201,168,76,.3); color:var(--ink); outline:none; resize:vertical; transition:border-color .25s; }
+    .form-group input:focus, .form-group textarea:focus { border-color:var(--gold); }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; }
+    .btn-submit { padding:1rem 2.4rem; background:var(--ink); color:var(--cream); font-size:.82rem; letter-spacing:.12em; text-transform:uppercase; font-weight:500; font-family:'DM Sans',sans-serif; border:none; cursor:pointer; align-self:flex-start; transition:background .25s; }
+    .btn-submit:hover { background:var(--rust); }
+    .success-msg { display:none; padding:1.2rem 1.6rem; background:rgba(201,168,76,.12); border:1px solid var(--gold); color:var(--ink); font-size:.9rem; }
+
+    /* FOOTER */
+    footer { background:var(--ink); padding:3rem 6vw; display:flex; align-items:center; justify-content:space-between; }
+    footer .nav-logo { color:var(--cream); font-size:1.3rem; }
+    footer .nav-logo span { color:var(--gold); }
+    footer span { font-size:.82rem; color:rgba(245,240,232,.5); }
+
+    /* RESPONSIVE */
+    @media(max-width:900px) {
+      .hero,.about-hero,.contact-wrap { grid-template-columns:1fr; padding:3.5rem 5vw; }
+      .hero-visual,.about-img { display:none; }
+      .cards,.mvv,.team-grid,.instr-grid,.contact-grid { grid-template-columns:1fr; }
+      .company-info-band { grid-template-columns:repeat(2,1fr); }
+      .stats-row { grid-template-columns:repeat(3,1fr); }
+      .form-row { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo" onclick="showPage('home')">Lumin<span>ary</span></a>
+  <ul class="nav-links">
+    <li><a href="#" onclick="showPage('home')"    id="nav-home"    class="active">Home</a></li>
+    <li><a href="#" onclick="showPage('about')"   id="nav-about">About Us</a></li>
+    <li><a href="#" onclick="showPage('contact')" id="nav-contact">Contact Us</a></li>
+  </ul>
+</nav>
+
+<!-- HOME -->
+<section class="page active" id="page-home">
+  <div class="hero">
+    <div>
+      <p class="hero-eyebrow">✦ Welcome to Luminary</p>
+      <h1 class="hero-title">Where every<br/><em>idea</em> finds<br/>its light.</h1>
+      <p class="hero-body">Luminary is a creative studio dedicated to shaping bold narratives, crafting refined experiences, and illuminating the potential in every project we touch.</p>
+      <div>
+        <a class="btn btn-primary" onclick="showPage('about')">Our Story</a>
+        <a class="btn btn-outline" onclick="showPage('contact')">Get in Touch</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card"><div class="hero-card-text"><span>Est. 2024</span>Craft. Vision. Light.</div></div>
+      <div class="hero-badge">Since<br/>2024<br/>✦</div>
+    </div>
+  </div>
+  <div class="stats-row">
+    <div class="stat"><div class="stat-num">120+</div><div class="stat-label">Projects Delivered</div></div>
+    <div class="stat"><div class="stat-num">48</div><div class="stat-label">Happy Clients</div></div>
+    <div class="stat"><div class="stat-num">6</div><div class="stat-label">Years of Craft</div></div>
+  </div>
+  <div class="features">
+    <div class="section-header">
+      <span class="section-tag">✦ What We Do</span>
+      <h2 class="section-title">Services built for the modern visionary</h2>
+    </div>
+    <div class="cards">
+      <div class="card"><div class="card-icon">✦</div><h3>Brand Strategy</h3><p>We build identities that resonate — from naming and positioning to visual systems that stand the test of time.</p></div>
+      <div class="card"><div class="card-icon">◈</div><h3>Digital Design</h3><p>Interfaces that feel inevitable. We obsess over every interaction, every pixel, every breath of white space.</p></div>
+      <div class="card"><div class="card-icon">◎</div><h3>Creative Direction</h3><p>From campaign concepting to editorial art direction — we bring cohesive vision to complex creative challenges.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT US -->
+<section class="page" id="page-about">
+
+  <!-- Company Intro -->
+  <div class="about-hero">
+    <div class="about-img"><div class="about-img-inner">L</div></div>
+    <div>
+      <span class="section-tag">✦ Who We Are</span>
+      <h2 class="section-title">Built by dreamers.<br/>Refined by <em>craft.</em></h2>
+      <div class="divider"></div>
+      <p class="body-text">Luminary is a full-service creative studio founded in 2024, headquartered in San Francisco, CA. We partner with forward-thinking brands, startups, and cultural institutions to craft experiences that are both beautiful and enduring.</p>
+      <p class="body-text">Our multidisciplinary team spans brand strategy, digital design, and creative direction. We believe the best work emerges from radical honesty, obsessive craft, and genuine curiosity about the world.</p>
+      <p class="body-text">Every project begins with deep listening — we learn your world before we shape it, because great creative work is always rooted in truth.</p>
+    </div>
+  </div>
+
+  <!-- Company Info Band -->
+  <div class="company-info-band">
+    <div class="ci-item"><div class="ci-label">Founded</div><div class="ci-value">2024, San Francisco</div></div>
+    <div class="ci-item"><div class="ci-label">Industry</div><div class="ci-value">Creative Design Studio</div></div>
+    <div class="ci-item"><div class="ci-label">Team Size</div><div class="ci-value">12 Full-time Members</div></div>
+    <div class="ci-item"><div class="ci-label">Projects Delivered</div><div class="ci-value">120+ across 15 countries</div></div>
+  </div>
+
+  <!-- Mission / Vision / Values -->
+  <div class="mvv">
+    <div class="mvv-card" data-num="01"><h3>Our Mission</h3><p>To illuminate the potential in every brand we touch — helping organisations communicate their truth with clarity, beauty, and lasting impact.</p></div>
+    <div class="mvv-card" data-num="02"><h3>Our Vision</h3><p>A world where design is never decorative — where every visual decision is a purposeful act of communication that moves people to think, feel, and act.</p></div>
+    <div class="mvv-card" data-num="03"><h3>Our Values</h3><p>Radical Honesty · Obsessive Craft · Purposeful Beauty · Long-term Thinking · Collaborative Spirit</p></div>
+  </div>
+
+  <!-- Team -->
+  <div class="team-section">
+    <div class="section-header">
+      <span class="section-tag">✦ The Team</span>
+      <h2 class="section-title">The people behind the work</h2>
+    </div>
+    <div class="team-grid">
+      <div class="team-card"><div class="team-avatar">A</div><h3>Anika Rao</h3><div class="role">Founder & Creative Director</div><div class="dept">Leadership</div></div>
+      <div class="team-card"><div class="team-avatar">M</div><h3>Marcus Bell</h3><div class="role">Head of Design</div><div class="dept">Design</div></div>
+      <div class="team-card"><div class="team-avatar">S</div><h3>Sophia Chen</h3><div class="role">Brand Strategist</div><div class="dept">Strategy</div></div>
+      <div class="team-card"><div class="team-avatar">R</div><h3>Ravi Kumar</h3><div class="role">Lead Developer</div><div class="dept">Engineering</div></div>
+    </div>
+  </div>
+
+  <!-- TEAM GUIDANCE & INSTRUCTIONS -->
+  <div class="guidance-section">
+    <div class="guidance-header">
+      <div>
+        <span class="section-tag">✦ Internal Resource</span>
+        <h2 class="section-title">Team <em>Guidance</em> &amp; Instructions</h2>
+      </div>
+      <div class="guidance-badge">&#128274; Team Members Only</div>
+    </div>
+
+    <div class="tab-row">
+      <button class="tab-btn active" onclick="switchTab('onboarding',this)">Onboarding</button>
+      <button class="tab-btn" onclick="switchTab('policies',this)">Policies</button>
+      <button class="tab-btn" onclick="switchTab('workflow',this)">Workflow</button>
+      <button class="tab-btn" onclick="switchTab('contacts',this)">Key Contacts</button>
+    </div>
+
+    <!-- Onboarding -->
+    <div class="tab-pane active" id="tab-onboarding">
+      <div class="instr-grid">
+        <div class="instr-card"><div class="instr-step">01</div><div class="instr-icon">&#128187;</div><h4>Set Up Your Workstation</h4><p>Before your first day, ensure your equipment is ready:</p><ul><li>Install Figma, Slack, and Notion from the company portal</li><li>Request GitHub access from your team lead</li><li>Set up 2FA on all company accounts</li><li>Join the #welcome and #general Slack channels</li></ul></div>
+        <div class="instr-card"><div class="instr-step">02</div><div class="instr-icon">&#128203;</div><h4>Complete Required Training</h4><p>All new team members must complete the following within Week 1:</p><ul><li>Company culture and values walkthrough (Notion)</li><li>Data privacy and security training (1 hr)</li><li>Brand standards and tone-of-voice guide</li><li>Tool access request via IT portal</li></ul></div>
+        <div class="instr-card"><div class="instr-step">03</div><div class="instr-icon">&#129309;</div><h4>Meet Your Team</h4><p>Schedule 1:1 intro calls within your first week:</p><ul><li>30-min intro with your direct manager</li><li>15-min intro with each team member in your dept.</li><li>Attend the weekly all-hands (every Monday 10 AM)</li><li>Join your department's Slack channel</li></ul></div>
+        <div class="instr-card"><div class="instr-step">04</div><div class="instr-icon">&#127919;</div><h4>First 30-Day Goals</h4><p>Your manager will set these with you, but expect to:</p><ul><li>Shadow at least 2 active client projects</li><li>Complete a small independent task or deliverable</li><li>Submit your 30-day check-in form via Notion</li><li>Identify areas where you need extra support</li></ul></div>
+      </div>
+    </div>
+
+    <!-- Policies -->
+    <div class="tab-pane" id="tab-policies">
+      <table class="policy-table">
+        <thead><tr><th>Policy</th><th>Description</th><th>Applies To</th><th>Updated</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Remote Work</strong></td><td>Team members may work remotely up to 3 days per week. Core hours are 10 AM – 4 PM PT. All remote work must be logged in Notion.</td><td><span class="badge badge-all">All Staff</span></td><td>Jan 2025</td></tr>
+          <tr><td><strong>Client Confidentiality</strong></td><td>All client data, briefs, and deliverables are strictly confidential. No client information may be shared externally without written approval from leadership.</td><td><span class="badge badge-all">All Staff</span></td><td>Mar 2025</td></tr>
+          <tr><td><strong>Code Review</strong></td><td>Every pull request must have at least one approved review before merging. PRs must reference the relevant Notion task ID.</td><td><span class="badge badge-dev">Engineering</span></td><td>Feb 2025</td></tr>
+          <tr><td><strong>Design File Naming</strong></td><td>All Figma files must follow the format: CLIENT_PROJECT_vX.X — e.g. ACME_Rebrand_v1.2. Archive completed files within 48 hrs of delivery.</td><td><span class="badge badge-dev">Design</span></td><td>Jan 2025</td></tr>
+          <tr><td><strong>Expense Approval</strong></td><td>Expenses under $100 require manager approval. Over $100 requires Creative Director sign-off. Submit receipts within 7 days.</td><td><span class="badge badge-all">All Staff</span></td><td>Dec 2024</td></tr>
+          <tr><td><strong>Performance Reviews</strong></td><td>Formal reviews are conducted bi-annually (June & December). Mid-cycle check-ins are scheduled by team leads every quarter.</td><td><span class="badge badge-lead">Team Leads</span></td><td>Jan 2025</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Workflow -->
+    <div class="tab-pane" id="tab-workflow">
+      <div class="checklist">
+        <div class="cl-item"><div class="cl-check">✦</div><div class="cl-body"><strong>Project Kick-off</strong><span>Every project begins with a kick-off meeting. Create a Notion project page, add the client brief, set milestones, and assign owners before any creative work begins.</span></div></div>
+        <div class="cl-item"><div class="cl-check">✦</div><div class="cl-body"><strong>Daily Stand-up (Async)</strong><span>Post your daily update in your department's Slack channel by 10:00 AM: What did you complete? What are you working on today? Any blockers?</span></div></div>
+        <div class="cl-item"><div class="cl-check">✦</div><div class="cl-body"><strong>Design Review Process</strong><span>All design work must go through a 2-stage review: (1) internal peer review, then (2) Creative Director sign-off before presenting to clients.</span></div></div>
+        <div class="cl-item"><div class="cl-check">✦</div><div class="cl-body"><strong>Client Communication</strong><span>All client-facing communication must be professional and routed via email or the project Slack channel. Keep all comms documented and visible to the team.</span></div></div>
+        <div class="cl-item"><div class="cl-check">✦</div><div class="cl-body"><strong>File & Asset Management</strong><span>Store all deliverables in the shared Google Drive under the correct client folder. Use the approved naming convention. Never store client assets on personal drives.</span></div></div>
+        <div class="cl-item"><div class="cl-check">✦</div><div class="cl-body"><strong>Project Close-out</strong><span>When a project ends: archive all files, update Notion with final notes, send a client satisfaction survey, and add a retrospective entry to the team knowledge base.</span></div></div>
+      </div>
+    </div>
+
+    <!-- Key Contacts -->
+    <div class="tab-pane" id="tab-contacts">
+      <div class="contact-grid">
+        <div class="contact-card"><div class="ci-label" style="color:var(--rust);">Leadership</div><h4>Anika Rao</h4><p>Founder & Creative Director<br/>Strategic decisions, client escalations, culture concerns</p><p style="margin-top:.6rem"><a href="mailto:anika@luminary.studio">anika@luminary.studio</a></p></div>
+        <div class="contact-card"><div class="ci-label" style="color:var(--rust);">Design</div><h4>Marcus Bell</h4><p>Head of Design<br/>Design reviews, Figma access, brand standards questions</p><p style="margin-top:.6rem"><a href="mailto:marcus@luminary.studio">marcus@luminary.studio</a></p></div>
+        <div class="contact-card"><div class="ci-label" style="color:var(--rust);">Strategy</div><h4>Sophia Chen</h4><p>Brand Strategist<br/>Client briefs, messaging frameworks, research requests</p><p style="margin-top:.6rem"><a href="mailto:sophia@luminary.studio">sophia@luminary.studio</a></p></div>
+        <div class="contact-card"><div class="ci-label" style="color:var(--rust);">Engineering</div><h4>Ravi Kumar</h4><p>Lead Developer<br/>GitHub access, deployments, technical blockers</p><p style="margin-top:.6rem"><a href="mailto:ravi@luminary.studio">ravi@luminary.studio</a></p></div>
+        <div class="contact-card"><div class="ci-label" style="color:var(--rust);">IT & Tools</div><h4>IT Help Desk</h4><p>Software installs, account access, hardware issues, 2FA setup</p><p style="margin-top:.6rem"><a href="mailto:it@luminary.studio">it@luminary.studio</a></p></div>
+        <div class="contact-card"><div class="ci-label" style="color:var(--rust);">HR & People</div><h4>People Team</h4><p>Leave requests, expense queries, payroll, performance reviews</p><p style="margin-top:.6rem"><a href="mailto:people@luminary.studio">people@luminary.studio</a></p></div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- CONTACT -->
+<section class="page" id="page-contact">
+  <div class="contact-wrap">
+    <div>
+      <span class="section-tag">✦ Reach Us</span>
+      <h2 class="section-title">Let's create<br/>something <em>luminous.</em></h2>
+      <div class="divider"></div>
+      <p class="body-text">Whether you have a project in mind, a question, or just want to say hello — we'd love to hear from you. Fill in the form and we'll be in touch within 48 hours.</p>
+      <div class="contact-detail"><div class="contact-icon">✉</div><div><strong style="display:block;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.2rem">Email</strong><span>hello@luminary.studio</span></div></div>
+      <div class="contact-detail"><div class="contact-icon">☎</div><div><strong style="display:block;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.2rem">Phone</strong><span>+1 (555) 012 3456</span></div></div>
+      <div class="contact-detail"><div class="contact-icon">◎</div><div><strong style="display:block;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.2rem">Studio</strong><span>12 Amber Lane, San Francisco, CA 94103</span></div></div>
+    </div>
+    <div>
+      <div class="success-msg" id="success-msg">✦ &nbsp;Thank you! Your message has been received. We'll be in touch soon.</div>
+      <form class="contact-form" onsubmit="handleSubmit(event)">
+        <div class="form-row">
+          <div class="form-group"><label>First Name</label><input type="text" placeholder="Anika" required/></div>
+          <div class="form-group"><label>Last Name</label><input type="text" placeholder="Rao" required/></div>
+        </div>
+        <div class="form-group"><label>Email Address</label><input type="email" placeholder="you@example.com" required/></div>
+        <div class="form-group"><label>Subject</label><select><option value="">Select a topic…</option><option>Brand Strategy</option><option>Digital Design</option><option>Creative Direction</option><option>General Inquiry</option></select></div>
+        <div class="form-group"><label>Message</label><textarea rows="5" placeholder="Tell us about your project…" required></textarea></div>
+        <button type="submit" class="btn-submit">Send Message →</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <a href="#" class="nav-logo" onclick="showPage('home')">Lumin<span>ary</span></a>
+  <span>© 2025 Luminary Studio. All rights reserved.</span>
+</footer>
+
+<script>
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    document.getElementById('nav-' + id).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return false;
+  }
+  function switchTab(id, btn) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+  function handleSubmit(e) {
+    e.preventDefault();
+    const msg = document.getElementById('success-msg');
+    msg.style.display = 'block';
+    e.target.reset();
+    setTimeout(() => { msg.style.display = 'none'; }, 6000);
+  }
+</script>
+</body>
+</html>
